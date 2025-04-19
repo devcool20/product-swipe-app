@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { Product, SwipeDirection } from '../types/product';
 import ProductCard from './ProductCard';
@@ -37,16 +37,16 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
     }
   }, [currentIndex, products.length, onCardsFinished]);
 
-  const resetToStart = () => {
+  const resetToStart = useCallback(() => {
     setCurrentIndex(0);
     x.set(0);
     y.set(0);
     setExitX(null);
     setExitY(null);
-  };
+  }, [x, y]);
 
   // Function to perform the swipe logic
-  const performSwipe = (direction: SwipeDirection) => {
+  const performSwipe = useCallback((direction: SwipeDirection) => {
     if (currentIndex >= products.length) return; // No more cards
 
     let tempExitX: number | null = null;
@@ -70,7 +70,7 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
       onSwipe(direction, products[currentIndex]);
     }
     setCurrentIndex(prev => prev + 1);
-  };
+  }, [currentIndex, products, onSwipe]);
 
   // Expose the triggerSwipe function via ref
   useImperativeHandle(ref, () => ({
@@ -78,9 +78,9 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
       performSwipe(direction);
     },
     resetToStart
-  }));
+  }), [performSwipe, resetToStart]);
 
-  const handleDragEnd = (
+  const handleDragEnd = useCallback((
     event: MouseEvent | TouchEvent | PointerEvent,
     info: { offset: { x: number; y: number }; velocity: { x: number; y: number } }
   ) => {
@@ -88,8 +88,8 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
     const yOffset = info.offset.y;
     const xVelocity = info.velocity.x;
     const yVelocity = info.velocity.y;
-    const swipeThreshold = 50; // Reduced threshold for better mobile responsiveness
-    const velocityThreshold = 300; // Reduced velocity threshold for smoother swipes
+    const swipeThreshold = 50;
+    const velocityThreshold = 300;
     let direction: SwipeDirection | null = null;
 
     // Determine dominant axis first
@@ -102,7 +102,7 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
       }
     } else if (Math.abs(yOffset) > Math.abs(xOffset) && (Math.abs(yOffset) > swipeThreshold || Math.abs(yVelocity) > velocityThreshold)) {
       // Vertical swipe is dominant
-      if (yOffset < 0 || yVelocity < -velocityThreshold) { // Only care about UP swipes
+      if (yOffset < 0 || yVelocity < -velocityThreshold) {
         direction = 'up';
       }
     }
@@ -110,7 +110,7 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
     if (direction) {
       performSwipe(direction);
     }
-  };
+  }, [performSwipe]);
 
   const cardVariants = {
     initial: (index: number) => ({
@@ -149,7 +149,7 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
 
   return (
     <div className="relative h-full w-full flex items-center justify-center touch-none">
-      <div className="relative w-full h-[600px]">
+      <div className="relative w-full h-full">
         <AnimatePresence mode="popLayout">
           {products.slice(currentIndex, currentIndex + 3).reverse().map((product, relativeIndexFromEnd) => {
             const displayIndex = products.slice(currentIndex, currentIndex + 3).length - 1 - relativeIndexFromEnd;
@@ -166,7 +166,8 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
                   position: 'absolute',
                   width: '100%',
                   height: '100%',
-                  transformOrigin: 'bottom center'
+                  transformOrigin: 'bottom center',
+                  touchAction: 'none'
                 }}
                 drag={isTopCard}
                 dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
@@ -178,7 +179,7 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
                 animate="center"
                 exit="exit"
                 whileDrag={isTopCard ? { scale: 1.02 } : {}}
-                className="touch-none"
+                className="touch-none will-change-transform"
               >
                 <ProductCard product={product} />
               </motion.div>
