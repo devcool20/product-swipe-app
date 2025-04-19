@@ -58,6 +58,9 @@ function App() {
     <div className="fixed inset-0 bg-[#fff5f6]">
       {/* Mobile View */}
       <div className="md:hidden relative h-full">
+        <h1 className="text-3xl font-bold text-center text-[#ff4d6d] pt-6 pb-4">
+          Product Swipe
+        </h1>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-full max-w-[400px] px-4">
             <CardStack 
@@ -74,7 +77,9 @@ function App() {
           <button
             type="button"
             onClick={handleDislikeClick}
-            className="bg-white w-16 h-16 rounded-full shadow-xl hover:bg-red-50 active:bg-red-100 transition-colors duration-150 flex items-center justify-center touch-manipulation"
+            onTouchStart={(e) => e.preventDefault()}
+            onTouchEnd={(e) => e.preventDefault()}
+            className="bg-white w-16 h-16 rounded-full shadow-xl hover:bg-red-50 active:bg-red-100 transition-colors duration-150 flex items-center justify-center touch-manipulation select-none"
             aria-label="Dislike"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#ff4d6d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -86,7 +91,9 @@ function App() {
             <button
               type="button"
               onClick={handleRefresh}
-              className="bg-white w-16 h-16 rounded-full shadow-xl hover:bg-blue-50 active:bg-blue-100 transition-colors duration-150 flex items-center justify-center touch-manipulation"
+              onTouchStart={(e) => e.preventDefault()}
+              onTouchEnd={(e) => e.preventDefault()}
+              className="bg-white w-16 h-16 rounded-full shadow-xl hover:bg-blue-50 active:bg-blue-100 transition-colors duration-150 flex items-center justify-center touch-manipulation select-none"
               aria-label="Refresh"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#ff4d6d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -97,7 +104,9 @@ function App() {
             <button
               type="button"
               onClick={handleLikeClick}
-              className="bg-white w-16 h-16 rounded-full shadow-xl hover:bg-green-50 active:bg-green-100 transition-colors duration-150 flex items-center justify-center touch-manipulation"
+              onTouchStart={(e) => e.preventDefault()}
+              onTouchEnd={(e) => e.preventDefault()}
+              className="bg-white w-16 h-16 rounded-full shadow-xl hover:bg-green-50 active:bg-green-100 transition-colors duration-150 flex items-center justify-center touch-manipulation select-none"
               aria-label="Like"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#4CAF50]" viewBox="0 0 20 20" fill="currentColor">

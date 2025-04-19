@@ -88,8 +88,8 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
     const yOffset = info.offset.y;
     const xVelocity = info.velocity.x;
     const yVelocity = info.velocity.y;
-    const swipeThreshold = 100;
-    const velocityThreshold = 500;
+    const swipeThreshold = 50; // Reduced threshold for better mobile responsiveness
+    const velocityThreshold = 300; // Reduced velocity threshold for smoother swipes
     let direction: SwipeDirection | null = null;
 
     // Determine dominant axis first
@@ -128,14 +128,14 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
       x: 0,
       y: 0,
       rotate: 0,
-      transition: { duration: 0.2 }
+      transition: { duration: 0.15, ease: "easeOut" }
     }),
     exit: {
       x: exitX || 0,
       y: exitY || 0,
       rotate: exitX ? Math.sign(exitX) * 25 : 0,
       opacity: 0,
-      transition: { duration: 0.2, ease: "easeOut" }
+      transition: { duration: 0.15, ease: "easeOut" }
     }
   };
 
@@ -148,7 +148,7 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
   }
 
   return (
-    <div className="relative h-full w-full flex items-center justify-center">
+    <div className="relative h-full w-full flex items-center justify-center touch-none">
       <div className="relative w-full h-[600px]">
         <AnimatePresence mode="popLayout">
           {products.slice(currentIndex, currentIndex + 3).reverse().map((product, relativeIndexFromEnd) => {
@@ -170,7 +170,7 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
                 }}
                 drag={isTopCard}
                 dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                dragElastic={0.7}
+                dragElastic={0.5}
                 onDragEnd={handleDragEnd}
                 custom={displayIndex}
                 variants={cardVariants}
@@ -178,6 +178,7 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
                 animate="center"
                 exit="exit"
                 whileDrag={isTopCard ? { scale: 1.02 } : {}}
+                className="touch-none"
               >
                 <ProductCard product={product} />
               </motion.div>
