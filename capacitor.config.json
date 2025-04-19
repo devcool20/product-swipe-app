@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.productswipe",
+  "appName": "product-swipe-app",
+  "webDir": "build",
+  "bundledWebRuntime": false
+}
