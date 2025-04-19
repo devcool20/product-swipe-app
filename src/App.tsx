@@ -72,7 +72,6 @@ function App() {
 
   return (
     <div className="fixed inset-0 bg-[#ffebee] overflow-hidden">
-      {/* Mobile View */}
       <div className="md:hidden relative h-full flex flex-col">
         <h1 className="text-3xl font-bold text-center text-[#d32f2f] pt-6 pb-4">
           Product Swipe
@@ -90,7 +89,6 @@ function App() {
           </div>
         </div>
         
-        {/* Action Buttons - Overlaid on cards */}
         <div className="absolute inset-x-0 bottom-24 flex justify-center items-center gap-12 z-[9999]">
           <button
             type="button"
@@ -150,7 +148,6 @@ function App() {
         </div>
       </div>
 
-      {/* Desktop/Tablet View */}
       <div className="hidden md:block h-full py-8 px-4">
         <div className="max-w-md mx-auto h-full flex flex-col">
           <h1 className="text-3xl font-bold text-center text-[#d32f2f] mb-8">

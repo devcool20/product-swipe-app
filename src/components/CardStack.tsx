@@ -22,7 +22,6 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
   const y = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-25, 25]);
 
-  // Reset motion values when the top card changes
   useEffect(() => {
     x.set(0);
     y.set(0);
@@ -30,7 +29,6 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
     setExitY(null);
   }, [currentIndex, x, y]);
 
-  // Check if all cards are finished
   useEffect(() => {
     if (currentIndex >= products.length && onCardsFinished) {
       onCardsFinished();
@@ -45,9 +43,8 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
     setExitY(null);
   }, [x, y]);
 
-  // Function to perform the swipe logic
   const performSwipe = useCallback((direction: SwipeDirection) => {
-    if (currentIndex >= products.length) return; // No more cards
+    if (currentIndex >= products.length) return;
 
     let tempExitX: number | null = null;
     let tempExitY: number | null = null;
@@ -72,7 +69,6 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
     setCurrentIndex(prev => prev + 1);
   }, [currentIndex, products, onSwipe]);
 
-  // Expose the triggerSwipe function via ref
   useImperativeHandle(ref, () => ({
     triggerSwipe: (direction: SwipeDirection) => {
       performSwipe(direction);
@@ -92,16 +88,13 @@ const CardStack = forwardRef<CardStackRef, CardStackProps>(({ products, onSwipe,
     const velocityThreshold = 300;
     let direction: SwipeDirection | null = null;
 
-    // Determine dominant axis first
     if (Math.abs(xOffset) > Math.abs(yOffset) && (Math.abs(xOffset) > swipeThreshold || Math.abs(xVelocity) > velocityThreshold)) {
-      // Horizontal swipe is dominant
       if (xOffset > 0 || xVelocity > velocityThreshold) {
         direction = 'right';
       } else {
         direction = 'left';
       }
     } else if (Math.abs(yOffset) > Math.abs(xOffset) && (Math.abs(yOffset) > swipeThreshold || Math.abs(yVelocity) > velocityThreshold)) {
-      // Vertical swipe is dominant
       if (yOffset < 0 || yVelocity < -velocityThreshold) {
         direction = 'up';
       }
