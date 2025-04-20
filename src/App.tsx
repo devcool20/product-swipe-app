@@ -11,6 +11,7 @@ function App() {
   const [allCardsFinished, setAllCardsFinished] = useState(false);
   const cardStackRef = useRef<CardStackRef>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isClicking, setIsClicking] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -47,24 +48,34 @@ function App() {
     setCartItems(prev => prev.filter(item => item.id !== product.id));
   };
 
-  const handleDislikeClick = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const debouncedClick = (handler: (e: React.MouseEvent | React.TouchEvent) => void) => {
+    return (e: React.MouseEvent | React.TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (isClicking) return;
+      
+      setIsClicking(true);
+      handler(e);
+      
+      setTimeout(() => {
+        setIsClicking(false);
+      }, 300);
+    };
+  };
+
+  const handleDislikeClick = debouncedClick((e: React.MouseEvent | React.TouchEvent) => {
     cardStackRef.current?.triggerSwipe('left');
-  };
+  });
 
-  const handleLikeClick = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleLikeClick = debouncedClick((e: React.MouseEvent | React.TouchEvent) => {
     cardStackRef.current?.triggerSwipe('right');
-  };
+  });
 
-  const handleRefresh = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleRefresh = debouncedClick((e: React.MouseEvent | React.TouchEvent) => {
     cardStackRef.current?.resetToStart();
     setAllCardsFinished(false);
-  };
+  });
 
   const handleCardsFinished = () => {
     setAllCardsFinished(true);
@@ -92,14 +103,8 @@ function App() {
         <div className="absolute inset-x-0 bottom-24 flex justify-center items-center gap-12 z-[9999]">
           <button
             type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              handleDislikeClick(e);
-            }}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              handleDislikeClick(e);
-            }}
+            onClick={handleDislikeClick}
+            onTouchStart={handleDislikeClick}
             className="bg-[#d32f2f] w-16 h-16 rounded-full shadow-xl hover:bg-[#b71c1c] active:bg-[#9a0007] transition-colors duration-150 flex items-center justify-center touch-manipulation select-none"
             aria-label="Dislike"
           >
@@ -111,14 +116,8 @@ function App() {
           {allCardsFinished ? (
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                handleRefresh(e);
-              }}
-              onTouchStart={(e) => {
-                e.preventDefault();
-                handleRefresh(e);
-              }}
+              onClick={handleRefresh}
+              onTouchStart={handleRefresh}
               className="bg-[#d32f2f] w-16 h-16 rounded-full shadow-xl hover:bg-[#b71c1c] active:bg-[#9a0007] transition-colors duration-150 flex items-center justify-center touch-manipulation select-none"
               aria-label="Refresh"
             >
@@ -129,14 +128,8 @@ function App() {
           ) : (
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                handleLikeClick(e);
-              }}
-              onTouchStart={(e) => {
-                e.preventDefault();
-                handleLikeClick(e);
-              }}
+              onClick={handleLikeClick}
+              onTouchStart={handleLikeClick}
               className="bg-[#d32f2f] w-16 h-16 rounded-full shadow-xl hover:bg-[#b71c1c] active:bg-[#9a0007] transition-colors duration-150 flex items-center justify-center touch-manipulation select-none"
               aria-label="Like"
             >
